@@ -4,17 +4,28 @@ import uuid from "uuid/v1"; // gera hash a partir do timestamp
 import NewNote from "./NewNote";
 import NoteList from "./NoteList";
 import AppBar from "./AppBar";
+import NoteService from "../services/NoteService";
+
 
 class App extends React.Component {
     state = {
         notes: [
-        ]
+        ],
+        isLoading: false
     };
 
+    componentDidMount() {
+        this.handleReload();
+    }
+
     handleAddNote = text => {
-        this.setState(prevState => ({
-            notes: prevState.notes.concat({ id: uuid(), text })
-        }));
+        this.setState(prevState => {
+            const notes = prevState.notes.concat({ id: uuid(), text });
+            this.handleSave(notes);
+            return {
+                notes
+            }
+        });
     };
 
     handleMove = (direction, index) => {
@@ -28,6 +39,8 @@ class App extends React.Component {
                 newNotes.splice(index + 1, 0, removedNote);
             }
 
+            this.handleSave(newNotes);
+
             return {
                 notes: newNotes
             };
@@ -39,6 +52,8 @@ class App extends React.Component {
             const newNotes = prevState.notes.slice();
             const index = newNotes.findIndex(note => note.id === id);
             newNotes.splice(index, 1)[0];
+
+            this.handleSave(newNotes);
 
             return {
                 notes: newNotes
@@ -52,6 +67,8 @@ class App extends React.Component {
             const index = newNotes.findIndex(note => note.id === id);
             newNotes[index].text = text;
 
+            this.handleSave(newNotes);
+
             return {
                 notes: newNotes
             };
@@ -59,26 +76,33 @@ class App extends React.Component {
     };
 
     handleReload = () => {
-        const notes = window.localStorage.getItem("notes");
-        this.setState({notes: JSON.parse(notes)});
+
+        this.setState({ isLoading: true });
+        NoteService.load().then(notes => {
+            this.setState({ notes: JSON.parse(notes), isLoading: false });
+        });
     }
 
-    handleSave = () => {
-        const {notes} = this.state;
-        window.localStorage.setItem("notes", JSON.stringify(notes));
+    handleSave = notes => {
+        this.setState({ isLoading: true });
+        NoteService.save(notes).then(() => {
+            this.setState({ isLoading: false });
+        });
+
     }
 
     render() {
+        const { isLoading } = this.state;
         return (
             <div>
-                <AppBar onReload={this.handleReload} onSave={this.handleSave}/>
+                <AppBar isLoading={isLoading} />
                 <div className="container">
                     <NewNote onAddNote={this.handleAddNote} />
-                    <NoteList 
-                        notes={this.state.notes} 
-                        onMove={this.handleMove} 
-                        onDelete={this.handleDelete} 
-                        onEdit={this.handleEdit} 
+                    <NoteList
+                        notes={this.state.notes}
+                        onMove={this.handleMove}
+                        onDelete={this.handleDelete}
+                        onEdit={this.handleEdit}
                     />
                 </div>
             </div>

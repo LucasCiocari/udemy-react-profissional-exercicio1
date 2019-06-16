@@ -41,6 +41,10 @@ body {
         &:hover {
             background-color: rgba(0,0,0,0.08);
         }
+
+        &--rotation {
+            @include rotation();
+        }
     }
 
     &__brand {

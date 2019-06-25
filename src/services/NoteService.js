@@ -1,23 +1,38 @@
+let failedLoadAttempts = 2;
+let failedSaveAttempts = 2;
+
 class NoteService {
 
-    static load(){
-        return new Promise(resolve => {
+    static load() {
+        return new Promise((resolve, reject) => {
             setTimeout(() => {
-                const notes = window.localStorage.getItem("notes");
-                resolve(notes);
-            }, 3000);
+                if (failedLoadAttempts > 1) {
+                    const notes = window.localStorage.getItem("notes");
+                    resolve(notes ? JSON.parse(notes) : []);
+                }
+                else {
+                    reject();
+                    failedLoadAttempts++;
+                }
+            }, 2000);
         });
-        
+
     }
 
-    static save(notes){
-        return new Promise( resolve => {
+    static save(notes) {
+        return new Promise((resolve, reject) => {
             setTimeout(() => {
-                window.localStorage.setItem("notes", JSON.stringify(notes));
-                resolve();
-            }, 3000);
+                if (failedSaveAttempts > 1) {
+                    window.localStorage.setItem("notes", JSON.stringify(notes));
+                    resolve();
+                }
+                else {
+                    reject();
+                    failedLoadAttempts++;
+                }
+            }, 2000);
         })
-        
+
     }
 
 }

@@ -1,12 +1,12 @@
-import React,{Fragment} from "react";
+import React, { Fragment } from "react";
+import { BrowserRouter as Router, Route } from "react-router-dom"
 import uuid from "uuid/v1"; // gera hash a partir do timestamp
 
-import NewNote from "./NewNote";
-import NoteList from "./NoteList";
-import AppBar from "./AppBar";
+import AppBar from "../components/AppBar";
 import NoteService from "../services/NoteService";
-import Error from "./Error";
-import NavigationDrawer from "./NavigationDrawer";
+import NavigationDrawer from "../components/NavigationDrawer";
+import About from "./About"
+import Notes from "../containers/Notes"
 
 
 class App extends React.Component {
@@ -14,7 +14,7 @@ class App extends React.Component {
         notes: [],
         isLoading: false,
         reloadHasError: false,
-        saveHasError : false,
+        saveHasError: false,
         isMenuOpen: false
     };
 
@@ -88,7 +88,7 @@ class App extends React.Component {
         this.setState({ isLoading: true, reloadHasError: false });
         NoteService.load().then(notes => {
             this.setState({ notes: notes, isLoading: false });
-        }).catch( () => {
+        }).catch(() => {
             this.setState({ isLoading: false, reloadHasError: true });
         });
     }
@@ -104,37 +104,40 @@ class App extends React.Component {
     }
 
     handleOpenMenu = () => {
-        this.setState({isMenuOpen: true})
+        this.setState({ isMenuOpen: true })
     }
 
     handleCloseMenu = () => {
-        this.setState({isMenuOpen: false})
+        this.setState({ isMenuOpen: false })
     }
 
     render() {
         const { isLoading, reloadHasError, saveHasError, notes, isMenuOpen } = this.state;
         return (
-            <div>
-                <AppBar isLoading={isLoading} saveHasError={saveHasError} onSaveRetry={() => {this.handleSave(notes);}}
-                onOpenMenu={this.handleOpenMenu}/>
-                <div className="container">
-                    {reloadHasError ? (<Error onRetry={this.handleReload} />) : 
-                    (
-                    <Fragment>
-                        <NewNote onAddNote={this.handleAddNote} />
-                        <NoteList
-                            notes={this.state.notes}
-                            onMove={this.handleMove}
-                            onDelete={this.handleDelete}
-                            onEdit={this.handleEdit}
-                        />
-                    </Fragment>
-                    )
-                    }
+            <Router>
+                <div>
+                    <AppBar isLoading={isLoading} saveHasError={saveHasError} onSaveRetry={() => { this.handleSave(notes); }}
+                        onOpenMenu={this.handleOpenMenu} />
+                    <div className="container">
+                        <React.Fragment>
+                            <Route path="/" exact render={props => <Notes 
+                                                                        notes={notes} 
+                                                                        reloadHasError={reloadHasError}
+
+                                                                        onRetry={this.handleReload} 
+                                                                        onAddNote={this.handleAddNote} 
+                                                                        onMove={this.handleMove} 
+                                                                        onDelete={this.handleDelete} 
+                                                                        onEdit={this.handleEdit} 
+                                                                    />
+                            } />
+                            <Route path="/about" exact component={About} />
+                        </React.Fragment>
+                    </div>
+                    <NavigationDrawer onCloseMenu={this.handleCloseMenu} isOpen={isMenuOpen} />
+
                 </div>
-                <NavigationDrawer onCloseMenu={this.handleCloseMenu} isOpen={isMenuOpen} />
-                
-            </div>
+            </Router>
         );
     }
 }

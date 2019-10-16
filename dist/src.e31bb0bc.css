@@ -1,3 +1,10 @@
+body {
+  background-color: #e8e8e8;
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  color: #212121;
+}
 @-webkit-keyframes rotation {
   from {
     -webkit-transform: rotate(0deg);
@@ -6,18 +13,6 @@
     -webkit-transform: rotate(359deg);
   }
 }
-body {
-  background-color: #e8e8e8;
-  margin: 0;
-  padding: 0;
-  font-family: "Roboto", sans-serif;
-  color: #212121;
-}
-
-.about {
-  text-align: center;
-}
-
 .error {
   text-align: center;
 }
@@ -29,7 +24,87 @@ body {
   cursor: pointer;
   color: #fff;
 }
-
+@-webkit-keyframes rotation {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(359deg);
+  }
+}
+.new-note {
+  background-color: #fff;
+  padding: 10px 12px;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+.new-note__input {
+  width: 100%;
+  border: none;
+}
+.new-note__input:focus {
+  outline: none;
+}
+@-webkit-keyframes rotation {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(359deg);
+  }
+}
+.note {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #fff;
+  padding: 10px 12px;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+.note__text {
+  flex: 1;
+}
+.note__input {
+  flex: 1;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  border-bottom: 1px solid #f5e674;
+}
+.note__button {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.note__button--hidden {
+  visibility: hidden;
+}
+.note__button--red {
+  color: #f44336;
+}
+.note__button--green {
+  color: #4caf50;
+}
+@-webkit-keyframes rotation {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(359deg);
+  }
+}
+.note-list {
+  margin: 40px 0px;
+}
+@-webkit-keyframes rotation {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(359deg);
+  }
+}
 .app-bar {
   position: fixed;
   top: 0;
@@ -70,7 +145,14 @@ body {
   flex: 1;
   padding-left: 8px;
 }
-
+@-webkit-keyframes rotation {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(359deg);
+  }
+}
 .navigation-drawer {
   position: fixed;
   top: 0;
@@ -117,63 +199,17 @@ body {
   border: none;
   cursor: pointer;
 }
-
 .container {
   margin: 0 auto;
   padding: 70px 20px;
   max-width: 500px;
 }
-
-.new-note {
-  background-color: #fff;
-  padding: 10px 12px;
-  border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+.header {
+  font-size: 48px;
+  font-weight: 300;
 }
-.new-note__input {
-  width: 100%;
-  border: none;
-}
-.new-note__input:focus {
-  outline: none;
-}
-
-.note-list {
-  margin: 40px 0px;
-}
-
-.note {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  background-color: #fff;
-  padding: 10px 12px;
-  border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-}
-.note__text {
-  flex: 1;
-}
-.note__input {
-  flex: 1;
-  border-top: 0;
-  border-right: 0;
-  border-left: 0;
-  border-bottom: 1px solid #f5e674;
-}
-.note__button {
-  background-color: transparent;
-  border: 0;
-  cursor: pointer;
-}
-.note__button--hidden {
-  visibility: hidden;
-}
-.note__button--red {
-  color: #f44336;
-}
-.note__button--green {
-  color: #4caf50;
+.header--centered {
+  text-align: center;
 }
 
 /*# sourceMappingURL=/src.e31bb0bc.css.map */

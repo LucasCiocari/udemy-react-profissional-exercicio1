@@ -2,6 +2,8 @@ import React from 'react'
 import classNames from "classnames"
 import { withRouter } from "react-router-dom"
 
+import "./navigation-drawer.scss"
+
 const NavigationDrawer = ({ onCloseMenu, isOpen, history }) => (
     <div className={classNames("navigation-drawer", { "navigation-drawer--open": isOpen })}>
         <div className="navigation-drawer__head">

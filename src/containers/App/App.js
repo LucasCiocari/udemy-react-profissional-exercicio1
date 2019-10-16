@@ -2,11 +2,11 @@ import React, { Fragment } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom"
 import uuid from "uuid/v1"; // gera hash a partir do timestamp
 
-import AppBar from "../components/AppBar";
-import NoteService from "../services/NoteService";
-import NavigationDrawer from "../components/NavigationDrawer";
-import About from "./About"
-import Notes from "../containers/Notes"
+import {PageLayout} from "../../components"
+
+import About from "../About/About"
+import NoteService from "../../services/NoteService"
+import Notes from "../Notes/Notes"
 
 
 class App extends React.Component {
@@ -115,10 +115,14 @@ class App extends React.Component {
         const { isLoading, reloadHasError, saveHasError, notes, isMenuOpen } = this.state;
         return (
             <Router>
-                <div>
-                    <AppBar isLoading={isLoading} saveHasError={saveHasError} onSaveRetry={() => { this.handleSave(notes); }}
-                        onOpenMenu={this.handleOpenMenu} />
-                    <div className="container">
+                <PageLayout 
+                    isLoading={isLoading} 
+                    saveHasError={saveHasError} 
+                    onSaveRetry={() => { this.handleSave(notes); }}
+                    onOpenMenu={this.handleOpenMenu}
+                    onCloseMenu={this.handleCloseMenu} 
+                    isMenuOpen={isMenuOpen}
+                >
                         <React.Fragment>
                             <Route path="/" exact render={props => <Notes 
                                                                         notes={notes} 
@@ -133,10 +137,7 @@ class App extends React.Component {
                             } />
                             <Route path="/about" exact component={About} />
                         </React.Fragment>
-                    </div>
-                    <NavigationDrawer onCloseMenu={this.handleCloseMenu} isOpen={isMenuOpen} />
-
-                </div>
+                        </PageLayout>
             </Router>
         );
     }

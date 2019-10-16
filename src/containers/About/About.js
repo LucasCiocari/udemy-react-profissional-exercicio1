@@ -1,10 +1,11 @@
 import React from "react"
 
+import {Header} from "../../components"
 const About = () => (
     <div className="about">
-        <h1>
+        <Header centered>
             Note.Js
-        </h1>
+        </Header>
     </div>
 )
 

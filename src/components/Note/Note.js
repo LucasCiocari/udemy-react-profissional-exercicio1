@@ -1,6 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 
+import "./note.scss"
 
 class Note extends React.Component {
 

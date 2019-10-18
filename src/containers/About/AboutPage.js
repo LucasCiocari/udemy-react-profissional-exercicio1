@@ -1,7 +1,7 @@
 import React from "react"
 
 import {Header} from "../../components"
-const About = () => (
+const AboutPage = () => (
     <div className="about">
         <Header centered>
             Note.Js
@@ -9,4 +9,4 @@ const About = () => (
     </div>
 )
 
-export default About
+export default AboutPage

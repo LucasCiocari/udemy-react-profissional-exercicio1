@@ -1,11 +1,13 @@
 import React from 'react';
 
+import withSettings from "../../containers/Settings/withSettings"
+
 import "./app-bar.scss"
 
-const AppBar = ({ isLoading, saveHasError, onSaveRetry, onOpenMenu }) => (
-    <div className="app-bar">
+const AppBar = ({ isLoading, saveHasError, onSaveRetry, onOpenMenu, theme }) => (
+    <div className="app-bar" style={theme && theme.navBar}>
         <div className="app-bar__container">
-        <button className="app-bar__action app-bar__action" onClick={onOpenMenu}>
+            <button className="app-bar__action app-bar__action" onClick={onOpenMenu}>
                 <i className="material-icons">menu</i>
             </button>
             <span className="app-bar__brand">Note JS</span>
@@ -16,6 +18,7 @@ const AppBar = ({ isLoading, saveHasError, onSaveRetry, onOpenMenu }) => (
                 <i className="material-icons">cloud_off</i>
             </button>}
         </div>
-    </div>);
+    </div>
+);
 
-export default AppBar;
+export default withSettings(AppBar);

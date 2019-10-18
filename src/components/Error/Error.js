@@ -1,15 +1,16 @@
 import React from 'react';
 
-import "./error.scss"
+import { Button, Header, Center } from "../"
+
 
 const Error = ({onRetry}) => (
-    <div className="error">
-        <h1>
+    <Center>
+        <Header centered>
             Ops!
-        </h1>
+        </Header>
         <p>Ocorreu um erro inesperado ao carregar a lista de notas</p>
-        <button className="error__button" onClick={onRetry} >Tentar novamente</button>
-    </div>
+        <Button onClick={onRetry} >Tentar novamente</Button>
+    </Center>
 )
 
 

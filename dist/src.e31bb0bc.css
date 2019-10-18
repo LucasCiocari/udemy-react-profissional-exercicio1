@@ -13,25 +13,6 @@ body {
     -webkit-transform: rotate(359deg);
   }
 }
-.error {
-  text-align: center;
-}
-.error__button {
-  background-color: pink;
-  border: none;
-  border-radius: 2px;
-  padding: 10px 12px;
-  cursor: pointer;
-  color: #fff;
-}
-@-webkit-keyframes rotation {
-  from {
-    -webkit-transform: rotate(0deg);
-  }
-  to {
-    -webkit-transform: rotate(359deg);
-  }
-}
 .new-note {
   background-color: #fff;
   padding: 10px 12px;
@@ -127,7 +108,7 @@ body {
 .app-bar__action {
   background-color: transparent;
   border: none;
-  color: white;
+  color: inherit;
 }
 .app-bar__action:focus {
   outline: none;
@@ -187,6 +168,9 @@ body {
 .navigation-drawer__menu__item:hover {
   background-color: rgba(0, 0, 0, 0.08);
 }
+.navigation-drawer__menu__item--active {
+  color: pink;
+}
 .navigation-drawer__head {
   height: 46px;
   display: flex;
@@ -210,6 +194,33 @@ body {
 }
 .header--centered {
   text-align: center;
+}
+.button {
+  background-color: pink;
+  border: none;
+  border-radius: 2px;
+  padding: 10px 12px;
+  cursor: pointer;
+  color: #fff;
+  text-decoration: none;
+}
+.center {
+  text-align: center;
+}
+.themes {
+  display: flex;
+}
+.themes__item {
+  background-color: pink;
+  color: white;
+  margin-right: 8px;
+  border: none;
+  border-radius: 4px;
+  padding: 60px 12px 0 12px;
+  min-width: 120px;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 /*# sourceMappingURL=/src.e31bb0bc.css.map */

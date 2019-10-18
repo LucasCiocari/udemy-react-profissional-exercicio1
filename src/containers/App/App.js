@@ -1,12 +1,14 @@
-import React, { Fragment } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom"
+import React from "react";
+import { BrowserRouter as Router } from "react-router-dom"
 import uuid from "uuid/v1"; // gera hash a partir do timestamp
 
-import {PageLayout} from "../../components"
+import { PageLayout } from "../../components"
 
-import About from "../About/About"
 import NoteService from "../../services/NoteService"
-import Notes from "../Notes/Notes"
+
+import Routes, { menu } from "../Routes"
+
+import SettingsProvider from "../Settings/SettingsProvider"
 
 
 class App extends React.Component {
@@ -115,29 +117,26 @@ class App extends React.Component {
         const { isLoading, reloadHasError, saveHasError, notes, isMenuOpen } = this.state;
         return (
             <Router>
-                <PageLayout 
-                    isLoading={isLoading} 
-                    saveHasError={saveHasError} 
-                    onSaveRetry={() => { this.handleSave(notes); }}
-                    onOpenMenu={this.handleOpenMenu}
-                    onCloseMenu={this.handleCloseMenu} 
-                    isMenuOpen={isMenuOpen}
-                >
-                        <React.Fragment>
-                            <Route path="/" exact render={props => <Notes 
-                                                                        notes={notes} 
-                                                                        reloadHasError={reloadHasError}
-
-                                                                        onRetry={this.handleReload} 
-                                                                        onAddNote={this.handleAddNote} 
-                                                                        onMove={this.handleMove} 
-                                                                        onDelete={this.handleDelete} 
-                                                                        onEdit={this.handleEdit} 
-                                                                    />
-                            } />
-                            <Route path="/about" exact component={About} />
-                        </React.Fragment>
-                        </PageLayout>
+                <SettingsProvider>
+                    <PageLayout
+                        isLoading={isLoading}
+                        saveHasError={saveHasError}
+                        onSaveRetry={() => { this.handleSave(notes); }}
+                        onOpenMenu={this.handleOpenMenu}
+                        onCloseMenu={this.handleCloseMenu}
+                        isMenuOpen={isMenuOpen}
+                        menu={menu}
+                    >
+                        <Routes
+                            notes={notes}
+                            reloadHasError={reloadHasError}
+                            onRetry={this.handleReload}
+                            onAddNote={this.handleAddNote}
+                            onMove={this.handleMove}
+                            onDelete={this.handleDelete}
+                            onEdit={this.handleEdit} />
+                    </PageLayout>
+                </SettingsProvider>
             </Router>
         );
     }

@@ -5,14 +5,14 @@ import NavigationDrawer from "../NavigationDrawer/NavigationDrawer"
 
 import "./page-layout.scss"
 
-const PageLayout = ({children, isLoading, saveHasError, onSaveRetry, onOpenMenu, onCloseMenu, isMenuOpen}) => (
+const PageLayout = ({children, isLoading, saveHasError, onSaveRetry, onOpenMenu, onCloseMenu, isMenuOpen, menu}) => (
     <div>
         <AppBar isLoading={isLoading} saveHasError={saveHasError} onSaveRetry={onSaveRetry}
         onOpenMenu={onOpenMenu} />
         <div className="container">
             {children}
         </div>
-        <NavigationDrawer onCloseMenu={onCloseMenu} isOpen={isMenuOpen} />
+        <NavigationDrawer menu={menu} onCloseMenu={onCloseMenu} isOpen={isMenuOpen} />
     </div>
 );
 

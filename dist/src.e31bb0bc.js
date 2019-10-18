@@ -29868,12 +29868,7 @@ function v1(options, buf, offset) {
 
 module.exports = v1;
 
-},{"./lib/rng":"../node_modules/uuid/lib/rng-browser.js","./lib/bytesToUuid":"../node_modules/uuid/lib/bytesToUuid.js"}],"components/Error/error.scss":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
-
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/Error/Error.js":[function(require,module,exports) {
+},{"./lib/rng":"../node_modules/uuid/lib/rng-browser.js","./lib/bytesToUuid":"../node_modules/uuid/lib/bytesToUuid.js"}],"components/Error/Error.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29883,23 +29878,22 @@ exports.default = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
-require("./error.scss");
+var _ = require("../");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Error = function Error(_ref) {
   var onRetry = _ref.onRetry;
-  return _react.default.createElement("div", {
-    className: "error"
-  }, _react.default.createElement("h1", null, "Ops!"), _react.default.createElement("p", null, "Ocorreu um erro inesperado ao carregar a lista de notas"), _react.default.createElement("button", {
-    className: "error__button",
+  return _react.default.createElement(_.Center, null, _react.default.createElement(_.Header, {
+    centered: true
+  }, "Ops!"), _react.default.createElement("p", null, "Ocorreu um erro inesperado ao carregar a lista de notas"), _react.default.createElement(_.Button, {
     onClick: onRetry
   }, "Tentar novamente"));
 };
 
 var _default = Error;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","./error.scss":"components/Error/error.scss"}],"components/NewNote/new-note.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../":"components/index.js"}],"components/NewNote/new-note.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -30245,7 +30239,49 @@ var NoteList = function NoteList(_ref) {
 
 var _default = NoteList;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","../Note/Note":"components/Note/Note.js","./note-list.scss":"components/NoteList/note-list.scss"}],"components/AppBar/app-bar.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../Note/Note":"components/Note/Note.js","./note-list.scss":"components/NoteList/note-list.scss"}],"containers/Settings/SettingsContext.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SettingsContext = _react.default.createContext();
+
+var _default = SettingsContext;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js"}],"containers/Settings/withSettings.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _SettingsContext = _interopRequireDefault(require("./SettingsContext"));
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var withSettings = function withSettings(Component) {
+  return function (props) {
+    return _react.default.createElement(_SettingsContext.default.Consumer, null, function (context) {
+      return _react.default.createElement(Component, _extends({}, props, context));
+    });
+  };
+};
+
+var _default = withSettings;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","./SettingsContext":"containers/Settings/SettingsContext.js"}],"components/AppBar/app-bar.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -30260,6 +30296,8 @@ exports.default = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
+var _withSettings = _interopRequireDefault(require("../../containers/Settings/withSettings"));
+
 require("./app-bar.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -30268,9 +30306,11 @@ var AppBar = function AppBar(_ref) {
   var isLoading = _ref.isLoading,
       saveHasError = _ref.saveHasError,
       onSaveRetry = _ref.onSaveRetry,
-      onOpenMenu = _ref.onOpenMenu;
+      onOpenMenu = _ref.onOpenMenu,
+      theme = _ref.theme;
   return _react.default.createElement("div", {
-    className: "app-bar"
+    className: "app-bar",
+    style: theme && theme.navBar
   }, _react.default.createElement("div", {
     className: "app-bar__container"
   }, _react.default.createElement("button", {
@@ -30292,14 +30332,48 @@ var AppBar = function AppBar(_ref) {
   }, "cloud_off"))));
 };
 
-var _default = AppBar;
+var _default = (0, _withSettings.default)(AppBar);
+
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","./app-bar.scss":"components/AppBar/app-bar.scss"}],"components/NavigationDrawer/navigation-drawer.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../../containers/Settings/withSettings":"containers/Settings/withSettings.js","./app-bar.scss":"components/AppBar/app-bar.scss"}],"components/NavigationDrawer/navigation-drawer.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/NavigationDrawer/NavigationDrawer.js":[function(require,module,exports) {
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/NavigationDrawer/MenuItem.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+require("./navigation-drawer.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var MenuItem = function MenuItem(_ref) {
+  var isActive = _ref.isActive,
+      icon = _ref.icon,
+      label = _ref.label,
+      onClick = _ref.onClick;
+  return _react.default.createElement("button", {
+    className: (0, _classnames.default)("navigation-drawer__menu__item", {
+      "navigation-drawer__menu__item--active": isActive
+    }),
+    onClick: onClick
+  }, _react.default.createElement("i", {
+    className: "material-icons"
+  }, icon), label);
+};
+
+var _default = MenuItem;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","./navigation-drawer.scss":"components/NavigationDrawer/navigation-drawer.scss"}],"components/NavigationDrawer/NavigationDrawer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30313,14 +30387,18 @@ var _classnames = _interopRequireDefault(require("classnames"));
 
 var _reactRouterDom = require("react-router-dom");
 
+var _MenuItem = _interopRequireDefault(require("./MenuItem"));
+
 require("./navigation-drawer.scss");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var NavigationDrawer = function NavigationDrawer(_ref) {
-  var onCloseMenu = _ref.onCloseMenu,
+  var menu = _ref.menu,
+      onCloseMenu = _ref.onCloseMenu,
       isOpen = _ref.isOpen,
-      history = _ref.history;
+      history = _ref.history,
+      location = _ref.location;
   return _react.default.createElement("div", {
     className: (0, _classnames.default)("navigation-drawer", {
       "navigation-drawer--open": isOpen
@@ -30334,29 +30412,24 @@ var NavigationDrawer = function NavigationDrawer(_ref) {
     className: "material-icons"
   }, "close"))), _react.default.createElement("div", {
     className: "navigation-drawer__menu"
-  }, _react.default.createElement("button", {
-    className: "navigation-drawer__menu__item",
-    onClick: function onClick() {
-      onCloseMenu();
-      history.push("/");
-    }
-  }, _react.default.createElement("i", {
-    className: "material-icons"
-  }, "note"), " Notas"), _react.default.createElement("button", {
-    className: "navigation-drawer__menu__item",
-    onClick: function onClick() {
-      onCloseMenu();
-      history.push("/about");
-    }
-  }, _react.default.createElement("i", {
-    className: "material-icons"
-  }, "info"), " Sobre")));
+  }, menu.map(function (item) {
+    return _react.default.createElement(_MenuItem.default, {
+      key: item.icon,
+      isActive: location.pathname === item.path,
+      onClick: function onClick() {
+        onCloseMenu();
+        history.push(item.path);
+      },
+      icon: menu.icon,
+      label: item.label
+    });
+  })));
 };
 
 var _default = (0, _reactRouterDom.withRouter)(NavigationDrawer);
 
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./navigation-drawer.scss":"components/NavigationDrawer/navigation-drawer.scss"}],"components/PageLayout/page-layout.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./MenuItem":"components/NavigationDrawer/MenuItem.js","./navigation-drawer.scss":"components/NavigationDrawer/navigation-drawer.scss"}],"components/PageLayout/page-layout.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -30386,7 +30459,8 @@ var PageLayout = function PageLayout(_ref) {
       onSaveRetry = _ref.onSaveRetry,
       onOpenMenu = _ref.onOpenMenu,
       onCloseMenu = _ref.onCloseMenu,
-      isMenuOpen = _ref.isMenuOpen;
+      isMenuOpen = _ref.isMenuOpen,
+      menu = _ref.menu;
   return _react.default.createElement("div", null, _react.default.createElement(_AppBar.default, {
     isLoading: isLoading,
     saveHasError: saveHasError,
@@ -30395,6 +30469,7 @@ var PageLayout = function PageLayout(_ref) {
   }), _react.default.createElement("div", {
     className: "container"
   }, children), _react.default.createElement(_NavigationDrawer.default, {
+    menu: menu,
     onCloseMenu: onCloseMenu,
     isOpen: isMenuOpen
   }));
@@ -30435,7 +30510,92 @@ var Header = function Header(_ref) {
 
 var _default = Header;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","./header.scss":"components/Header/header.scss"}],"components/index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","./header.scss":"components/Header/header.scss"}],"components/Button/button.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/Button/Button.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+require("./button.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Button = function Button(_ref) {
+  var children = _ref.children,
+      onClick = _ref.onClick;
+  return _react.default.createElement("button", {
+    className: "button",
+    onClick: onClick
+  }, children);
+};
+
+var _default = Button;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","./button.scss":"components/Button/button.scss"}],"components/Center/center.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/Center/Center.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+require("./center.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Center = function Center(_ref) {
+  var children = _ref.children;
+  return _react.default.createElement("div", {
+    className: "center"
+  }, children);
+};
+
+var _default = Center;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","./center.scss":"components/Center/center.scss"}],"components/Button/ButtonLink.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _reactRouterDom = require("react-router-dom");
+
+require("./button.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ButtonLink = function ButtonLink(_ref) {
+  var children = _ref.children,
+      to = _ref.to;
+  return _react.default.createElement(_reactRouterDom.Link, {
+    className: "button",
+    to: to
+  }, children);
+};
+
+var _default = ButtonLink;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./button.scss":"components/Button/button.scss"}],"components/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30477,6 +30637,36 @@ Object.defineProperty(exports, "Header", {
     return _Header.default;
   }
 });
+Object.defineProperty(exports, "Button", {
+  enumerable: true,
+  get: function () {
+    return _Button.default;
+  }
+});
+Object.defineProperty(exports, "Center", {
+  enumerable: true,
+  get: function () {
+    return _Center.default;
+  }
+});
+Object.defineProperty(exports, "ButtonLink", {
+  enumerable: true,
+  get: function () {
+    return _ButtonLink.default;
+  }
+});
+Object.defineProperty(exports, "MenuItem", {
+  enumerable: true,
+  get: function () {
+    return _MenuItem.default;
+  }
+});
+Object.defineProperty(exports, "AppBar", {
+  enumerable: true,
+  get: function () {
+    return _AppBar.default;
+  }
+});
 
 var _Error = _interopRequireDefault(require("./Error/Error"));
 
@@ -30490,32 +30680,18 @@ var _PageLayout = _interopRequireDefault(require("./PageLayout/PageLayout"));
 
 var _Header = _interopRequireDefault(require("./Header/Header"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./Error/Error":"components/Error/Error.js","./NewNote/NewNote":"components/NewNote/NewNote.js","./Note/Note":"components/Note/Note.js","./NoteList/NoteList":"components/NoteList/NoteList.js","./PageLayout/PageLayout":"components/PageLayout/PageLayout.js","./Header/Header":"components/Header/Header.js"}],"containers/About/About.js":[function(require,module,exports) {
-"use strict";
+var _Button = _interopRequireDefault(require("./Button/Button"));
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
+var _Center = _interopRequireDefault(require("./Center/Center"));
 
-var _react = _interopRequireDefault(require("react"));
+var _ButtonLink = _interopRequireDefault(require("./Button/ButtonLink"));
 
-var _components = require("../../components");
+var _MenuItem = _interopRequireDefault(require("./NavigationDrawer/MenuItem"));
+
+var _AppBar = _interopRequireDefault(require("./AppBar/AppBar"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var About = function About() {
-  return _react.default.createElement("div", {
-    className: "about"
-  }, _react.default.createElement(_components.Header, {
-    centered: true
-  }, "Note.Js"));
-};
-
-var _default = About;
-exports.default = _default;
-},{"react":"../node_modules/react/index.js","../../components":"components/index.js"}],"services/NoteService.js":[function(require,module,exports) {
+},{"./Error/Error":"components/Error/Error.js","./NewNote/NewNote":"components/NewNote/NewNote.js","./Note/Note":"components/Note/Note.js","./NoteList/NoteList":"components/NoteList/NoteList.js","./PageLayout/PageLayout":"components/PageLayout/PageLayout.js","./Header/Header":"components/Header/Header.js","./Button/Button":"components/Button/Button.js","./Center/Center":"components/Center/Center.js","./Button/ButtonLink":"components/Button/ButtonLink.js","./NavigationDrawer/MenuItem":"components/NavigationDrawer/MenuItem.js","./AppBar/AppBar":"components/AppBar/AppBar.js"}],"services/NoteService.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30576,7 +30752,7 @@ function () {
 
 var _default = NoteService;
 exports.default = _default;
-},{}],"containers/Notes/Notes.js":[function(require,module,exports) {
+},{}],"containers/Notes/NotesPage.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30592,7 +30768,7 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-var Notes = function Notes(_ref) {
+var NotesPage = function NotesPage(_ref) {
   var reloadHasError = _ref.reloadHasError,
       onRetry = _ref.onRetry,
       onAddNote = _ref.onAddNote,
@@ -30618,9 +30794,200 @@ var Notes = function Notes(_ref) {
   }));
 };
 
-var _default = Notes;
+var _default = NotesPage;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","../../components":"components/index.js"}],"containers/App/App.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../../components":"components/index.js"}],"containers/About/AboutPage.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _components = require("../../components");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AboutPage = function AboutPage() {
+  return _react.default.createElement("div", {
+    className: "about"
+  }, _react.default.createElement(_components.Header, {
+    centered: true
+  }, "Note.Js"));
+};
+
+var _default = AboutPage;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","../../components":"components/index.js"}],"images/travolta.gif":[function(require,module,exports) {
+module.exports = "/travolta.a8191ff1.gif";
+},{}],"containers/PageNotFound/PageNotFound.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _travolta = _interopRequireDefault(require("../../images/travolta.gif"));
+
+var _components = require("../../components");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var PageNotFound = function PageNotFound() {
+  return _react.default.createElement(_components.Center, null, _react.default.createElement(_components.Header, null, "Ops!"), _react.default.createElement("div", null, _react.default.createElement("img", {
+    src: _travolta.default,
+    alt: "John Travolta",
+    width: "280"
+  })), _react.default.createElement(_components.ButtonLink, {
+    to: "/"
+  }, " Voltar para o in\xEDcio"));
+};
+
+var _default = PageNotFound;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","../../images/travolta.gif":"images/travolta.gif","../../components":"components/index.js"}],"containers/Settings/settings.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"containers/Settings/SettingsPage.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _components = require("../../components");
+
+var _withSettings = _interopRequireDefault(require("./withSettings"));
+
+require("./settings.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var themes = [{
+  key: "default",
+  label: "Padrão"
+}, {
+  key: "classic",
+  label: "Clássico",
+  navBar: {
+    backgroundColor: "#789fca"
+  }
+}, {
+  key: "light",
+  label: "Light",
+  navBar: {
+    backgroundColor: "#d62ea9",
+    color: "#212121"
+  }
+}];
+
+var SettingsPage = function SettingsPage(_ref) {
+  var selectedTheme = _ref.theme,
+      toggleTheme = _ref.toggleTheme;
+  return _react.default.createElement("div", null, _react.default.createElement(_components.Header, null, "Temas"), _react.default.createElement("div", {
+    className: "themes"
+  }, themes.map(function (theme) {
+    return _react.default.createElement("button", {
+      key: theme.key,
+      className: "themes__item",
+      style: theme.navBar,
+      onClick: function onClick() {
+        toggleTheme(theme);
+      }
+    }, _react.default.createElement("p", null, theme.label, theme.key === selectedTheme.key && _react.default.createElement("i", {
+      className: "material-icons"
+    }, " check ")));
+  })));
+};
+
+var _default = (0, _withSettings.default)(SettingsPage);
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","../../components":"components/index.js","./withSettings":"containers/Settings/withSettings.js","./settings.scss":"containers/Settings/settings.scss"}],"containers/Routes.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.menu = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _NotesPage = _interopRequireDefault(require("./Notes/NotesPage"));
+
+var _AboutPage = _interopRequireDefault(require("./About/AboutPage"));
+
+var _PageNotFound = _interopRequireDefault(require("./PageNotFound/PageNotFound"));
+
+var _SettingsPage = _interopRequireDefault(require("./Settings/SettingsPage"));
+
+var _reactRouterDom = require("react-router-dom");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var menu = [{
+  icon: "note",
+  label: "Notas",
+  path: "/"
+}, {
+  icon: "settings",
+  label: "Configurações",
+  path: "/settings"
+}, {
+  icon: "about",
+  label: "Sobre",
+  path: "/about"
+}];
+exports.menu = menu;
+
+var Routes = function Routes(_ref) {
+  var notes = _ref.notes,
+      reloadHasError = _ref.reloadHasError,
+      onRetry = _ref.onRetry,
+      onAddNote = _ref.onAddNote,
+      onMove = _ref.onMove,
+      onDelete = _ref.onDelete,
+      onEdit = _ref.onEdit;
+  return _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
+    path: "/",
+    exact: true,
+    render: function render(props) {
+      return _react.default.createElement(_NotesPage.default, {
+        notes: notes,
+        reloadHasError: reloadHasError,
+        onRetry: onRetry,
+        onAddNote: onAddNote,
+        onMove: onMove,
+        onDelete: onDelete,
+        onEdit: onEdit
+      });
+    }
+  }), _react.default.createElement(_reactRouterDom.Route, {
+    path: "/about",
+    exact: true,
+    component: _AboutPage.default
+  }), _react.default.createElement(_reactRouterDom.Route, {
+    path: "/settings",
+    exact: true,
+    component: _SettingsPage.default
+  }), _react.default.createElement(_reactRouterDom.Route, {
+    component: _PageNotFound.default
+  }));
+};
+
+var _default = Routes;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","./Notes/NotesPage":"containers/Notes/NotesPage.js","./About/AboutPage":"containers/About/AboutPage.js","./PageNotFound/PageNotFound":"containers/PageNotFound/PageNotFound.js","./Settings/SettingsPage":"containers/Settings/SettingsPage.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js"}],"containers/Settings/SettingsProvider.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30630,23 +30997,104 @@ exports.default = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
-var _reactRouterDom = require("react-router-dom");
-
-var _v = _interopRequireDefault(require("uuid/v1"));
-
-var _components = require("../../components");
-
-var _About = _interopRequireDefault(require("../About/About"));
-
-var _NoteService = _interopRequireDefault(require("../../services/NoteService"));
-
-var _Notes = _interopRequireDefault(require("../Notes/Notes"));
+var _SettingsContext = _interopRequireDefault(require("./SettingsContext"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var SettingsProvider =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(SettingsProvider, _Component);
+
+  function SettingsProvider() {
+    var _getPrototypeOf2;
+
+    var _this;
+
+    var _temp;
+
+    _classCallCheck(this, SettingsProvider);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _possibleConstructorReturn(_this, (_temp = _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(SettingsProvider)).call.apply(_getPrototypeOf2, [this].concat(args))), _this.state = {
+      theme: {}
+    }, _this.handleToggleTheme = function (t) {
+      _this.setState({
+        theme: t
+      });
+    }, _temp));
+  }
+
+  _createClass(SettingsProvider, [{
+    key: "render",
+    value: function render() {
+      var theme = this.state.theme;
+      var children = this.props.children;
+      return _react.default.createElement(_SettingsContext.default.Provider, {
+        value: {
+          theme: theme,
+          toggleTheme: this.handleToggleTheme
+        }
+      }, children);
+    }
+  }]);
+
+  return SettingsProvider;
+}(_react.Component);
+
+exports.default = SettingsProvider;
+},{"react":"../node_modules/react/index.js","./SettingsContext":"containers/Settings/SettingsContext.js"}],"containers/App/App.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _reactRouterDom = require("react-router-dom");
+
+var _v = _interopRequireDefault(require("uuid/v1"));
+
+var _components = require("../../components");
+
+var _NoteService = _interopRequireDefault(require("../../services/NoteService"));
+
+var _Routes = _interopRequireWildcard(require("../Routes"));
+
+var _SettingsProvider = _interopRequireDefault(require("../Settings/SettingsProvider"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -30815,7 +31263,7 @@ function (_React$Component) {
           saveHasError = _this$state.saveHasError,
           notes = _this$state.notes,
           isMenuOpen = _this$state.isMenuOpen;
-      return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_components.PageLayout, {
+      return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_SettingsProvider.default, null, _react.default.createElement(_components.PageLayout, {
         isLoading: isLoading,
         saveHasError: saveHasError,
         onSaveRetry: function onSaveRetry() {
@@ -30823,25 +31271,16 @@ function (_React$Component) {
         },
         onOpenMenu: this.handleOpenMenu,
         onCloseMenu: this.handleCloseMenu,
-        isMenuOpen: isMenuOpen
-      }, _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_reactRouterDom.Route, {
-        path: "/",
-        exact: true,
-        render: function render(props) {
-          return _react.default.createElement(_Notes.default, {
-            notes: notes,
-            reloadHasError: reloadHasError,
-            onRetry: _this2.handleReload,
-            onAddNote: _this2.handleAddNote,
-            onMove: _this2.handleMove,
-            onDelete: _this2.handleDelete,
-            onEdit: _this2.handleEdit
-          });
-        }
-      }), _react.default.createElement(_reactRouterDom.Route, {
-        path: "/about",
-        exact: true,
-        component: _About.default
+        isMenuOpen: isMenuOpen,
+        menu: _Routes.menu
+      }, _react.default.createElement(_Routes.default, {
+        notes: notes,
+        reloadHasError: reloadHasError,
+        onRetry: this.handleReload,
+        onAddNote: this.handleAddNote,
+        onMove: this.handleMove,
+        onDelete: this.handleDelete,
+        onEdit: this.handleEdit
       }))));
     }
   }]);
@@ -30851,7 +31290,7 @@ function (_React$Component) {
 
 var _default = App;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","uuid/v1":"../node_modules/uuid/v1.js","../../components":"components/index.js","../About/About":"containers/About/About.js","../../services/NoteService":"services/NoteService.js","../Notes/Notes":"containers/Notes/Notes.js"}],"index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","uuid/v1":"../node_modules/uuid/v1.js","../../components":"components/index.js","../../services/NoteService":"services/NoteService.js","../Routes":"containers/Routes.js","../Settings/SettingsProvider":"containers/Settings/SettingsProvider.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -30893,7 +31332,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61811" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53915" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

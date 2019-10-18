@@ -2,9 +2,10 @@ import React from 'react'
 import classNames from "classnames"
 import { withRouter } from "react-router-dom"
 
-import "./navigation-drawer.scss"
+import MenuItem from "./MenuItem"
+import "./navigation-drawer.scss";
 
-const NavigationDrawer = ({ onCloseMenu, isOpen, history }) => (
+const NavigationDrawer = ({menu, onCloseMenu, isOpen, history, location }) => (
     <div className={classNames("navigation-drawer", { "navigation-drawer--open": isOpen })}>
         <div className="navigation-drawer__head">
             <button className="navigation-drawer__head__button" onClick={onCloseMenu}>
@@ -12,10 +13,9 @@ const NavigationDrawer = ({ onCloseMenu, isOpen, history }) => (
             </button>
         </div>
         <div className="navigation-drawer__menu">
-            <button className="navigation-drawer__menu__item" onClick={() => { onCloseMenu(); history.push("/") }}><i className="material-icons">note</i> Notas</button>
-            <button className="navigation-drawer__menu__item" onClick={() => { onCloseMenu(); history.push("/about") }}><i className="material-icons">info</i> Sobre</button>
+            {menu.map(item => <MenuItem key={item.icon} isActive={location.pathname === item.path} onClick={() => { onCloseMenu(); history.push(item.path) }} icon={menu.icon} label={item.label} />)}
         </div>
     </div>
 )
 
-export default withRouter(NavigationDrawer)
+export default withRouter(NavigationDrawer);

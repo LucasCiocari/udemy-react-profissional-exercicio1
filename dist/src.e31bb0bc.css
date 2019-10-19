@@ -78,53 +78,24 @@ body {
 .note-list {
   margin: 40px 0px;
 }
-@-webkit-keyframes rotation {
-  from {
-    -webkit-transform: rotate(0deg);
-  }
-  to {
-    -webkit-transform: rotate(359deg);
-  }
+.header {
+  font-size: 48px;
+  font-weight: 300;
 }
-.app-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+.header--centered {
+  text-align: center;
+}
+.button {
   background-color: pink;
-  color: white;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-}
-.app-bar__container {
-  height: 46px;
-  display: flex;
-  align-items: center;
-  margin: 0 auto;
-  padding: 0px 20px;
-  max-width: 500px;
-  border-radius: 2px;
-  cursor: pointer;
-}
-.app-bar__action {
-  background-color: transparent;
   border: none;
-  color: inherit;
+  border-radius: 2px;
+  padding: 10px 12px;
+  cursor: pointer;
+  color: #fff;
+  text-decoration: none;
 }
-.app-bar__action:focus {
-  outline: none;
-}
-.app-bar__action:hover {
-  background-color: rgba(0, 0, 0, 0.08);
-}
-.app-bar__action--rotation {
-  animation: rotation 2s infinite linear;
-}
-.app-bar__action--danger {
-  color: #f44336;
-}
-.app-bar__brand {
-  flex: 1;
-  padding-left: 8px;
+.center {
+  text-align: center;
 }
 @-webkit-keyframes rotation {
   from {
@@ -183,29 +154,58 @@ body {
   border: none;
   cursor: pointer;
 }
+@-webkit-keyframes rotation {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(359deg);
+  }
+}
+.app-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: pink;
+  color: white;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+.app-bar__container {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+  padding: 0px 20px;
+  max-width: 500px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.app-bar__action {
+  background-color: transparent;
+  border: none;
+  color: inherit;
+}
+.app-bar__action:focus {
+  outline: none;
+}
+.app-bar__action:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+.app-bar__action--rotation {
+  animation: rotation 2s infinite linear;
+}
+.app-bar__action--danger {
+  color: #f44336;
+}
+.app-bar__brand {
+  flex: 1;
+  padding-left: 8px;
+}
 .container {
   margin: 0 auto;
   padding: 70px 20px;
   max-width: 500px;
-}
-.header {
-  font-size: 48px;
-  font-weight: 300;
-}
-.header--centered {
-  text-align: center;
-}
-.button {
-  background-color: pink;
-  border: none;
-  border-radius: 2px;
-  padding: 10px 12px;
-  cursor: pointer;
-  color: #fff;
-  text-decoration: none;
-}
-.center {
-  text-align: center;
 }
 .themes {
   display: flex;

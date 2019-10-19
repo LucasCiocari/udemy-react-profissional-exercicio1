@@ -29695,180 +29695,49 @@ if ("development" !== "production") {
     style: _propTypes.default.object
   });
 }
-},{"@babel/runtime/helpers/esm/inheritsLoose":"../node_modules/@babel/runtime/helpers/esm/inheritsLoose.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/esm/react-router.js","history":"../node_modules/history/esm/history.js","prop-types":"../node_modules/prop-types/index.js","tiny-warning":"../node_modules/tiny-warning/dist/tiny-warning.esm.js","@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","tiny-invariant":"../node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"../node_modules/uuid/lib/rng-browser.js":[function(require,module,exports) {
-// Unique ID creation requires a high quality random # generator.  In the
-// browser this is a little complicated due to unknown quality of Math.random()
-// and inconsistent support for the `crypto` API.  We do the best we can via
-// feature-detection
+},{"@babel/runtime/helpers/esm/inheritsLoose":"../node_modules/@babel/runtime/helpers/esm/inheritsLoose.js","react":"../node_modules/react/index.js","react-router":"../node_modules/react-router/esm/react-router.js","history":"../node_modules/history/esm/history.js","prop-types":"../node_modules/prop-types/index.js","tiny-warning":"../node_modules/tiny-warning/dist/tiny-warning.esm.js","@babel/runtime/helpers/esm/extends":"../node_modules/@babel/runtime/helpers/esm/extends.js","@babel/runtime/helpers/esm/objectWithoutPropertiesLoose":"../node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js","tiny-invariant":"../node_modules/tiny-invariant/dist/tiny-invariant.esm.js"}],"containers/Notes/NotesContext.js":[function(require,module,exports) {
+"use strict";
 
-// getRandomValues needs to be invoked in a context where "this" is a Crypto
-// implementation. Also, find the complete implementation of crypto on IE11.
-var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
-                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
 
-if (getRandomValues) {
-  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
-  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+var _react = _interopRequireDefault(require("react"));
 
-  module.exports = function whatwgRNG() {
-    getRandomValues(rnds8);
-    return rnds8;
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var NotesContext = _react.default.createContext();
+
+var _default = NotesContext;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js"}],"containers/Notes/withNotes.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _NotesContext = _interopRequireDefault(require("./NotesContext"));
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var withNotes = function withNotes(Component) {
+  return function (props) {
+    return _react.default.createElement(_NotesContext.default.Consumer, null, function (context) {
+      return _react.default.createElement(Component, _extends({}, props, context));
+    });
   };
-} else {
-  // Math.random()-based (RNG)
-  //
-  // If all else fails, use Math.random().  It's fast, but is of unspecified
-  // quality.
-  var rnds = new Array(16);
+};
 
-  module.exports = function mathRNG() {
-    for (var i = 0, r; i < 16; i++) {
-      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
-      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
-    }
-
-    return rnds;
-  };
-}
-
-},{}],"../node_modules/uuid/lib/bytesToUuid.js":[function(require,module,exports) {
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-var byteToHex = [];
-for (var i = 0; i < 256; ++i) {
-  byteToHex[i] = (i + 0x100).toString(16).substr(1);
-}
-
-function bytesToUuid(buf, offset) {
-  var i = offset || 0;
-  var bth = byteToHex;
-  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
-  return ([bth[buf[i++]], bth[buf[i++]], 
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]],
-	bth[buf[i++]], bth[buf[i++]],
-	bth[buf[i++]], bth[buf[i++]]]).join('');
-}
-
-module.exports = bytesToUuid;
-
-},{}],"../node_modules/uuid/v1.js":[function(require,module,exports) {
-var rng = require('./lib/rng');
-var bytesToUuid = require('./lib/bytesToUuid');
-
-// **`v1()` - Generate time-based UUID**
-//
-// Inspired by https://github.com/LiosK/UUID.js
-// and http://docs.python.org/library/uuid.html
-
-var _nodeId;
-var _clockseq;
-
-// Previous uuid creation time
-var _lastMSecs = 0;
-var _lastNSecs = 0;
-
-// See https://github.com/broofa/node-uuid for API details
-function v1(options, buf, offset) {
-  var i = buf && offset || 0;
-  var b = buf || [];
-
-  options = options || {};
-  var node = options.node || _nodeId;
-  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
-
-  // node and clockseq need to be initialized to random values if they're not
-  // specified.  We do this lazily to minimize issues related to insufficient
-  // system entropy.  See #189
-  if (node == null || clockseq == null) {
-    var seedBytes = rng();
-    if (node == null) {
-      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-      node = _nodeId = [
-        seedBytes[0] | 0x01,
-        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
-      ];
-    }
-    if (clockseq == null) {
-      // Per 4.2.2, randomize (14 bit) clockseq
-      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
-    }
-  }
-
-  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
-  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
-  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
-  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
-  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
-
-  // Per 4.2.1.2, use count of uuid's generated during the current clock
-  // cycle to simulate higher resolution clock
-  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
-
-  // Time since last uuid creation (in msecs)
-  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
-
-  // Per 4.2.1.2, Bump clockseq on clock regression
-  if (dt < 0 && options.clockseq === undefined) {
-    clockseq = clockseq + 1 & 0x3fff;
-  }
-
-  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
-  // time interval
-  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
-    nsecs = 0;
-  }
-
-  // Per 4.2.1.2 Throw error if too many uuids are requested
-  if (nsecs >= 10000) {
-    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
-  }
-
-  _lastMSecs = msecs;
-  _lastNSecs = nsecs;
-  _clockseq = clockseq;
-
-  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
-  msecs += 12219292800000;
-
-  // `time_low`
-  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
-  b[i++] = tl >>> 24 & 0xff;
-  b[i++] = tl >>> 16 & 0xff;
-  b[i++] = tl >>> 8 & 0xff;
-  b[i++] = tl & 0xff;
-
-  // `time_mid`
-  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
-  b[i++] = tmh >>> 8 & 0xff;
-  b[i++] = tmh & 0xff;
-
-  // `time_high_and_version`
-  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
-  b[i++] = tmh >>> 16 & 0xff;
-
-  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
-  b[i++] = clockseq >>> 8 | 0x80;
-
-  // `clock_seq_low`
-  b[i++] = clockseq & 0xff;
-
-  // `node`
-  for (var n = 0; n < 6; ++n) {
-    b[i + n] = node[n];
-  }
-
-  return buf ? buf : bytesToUuid(b);
-}
-
-module.exports = v1;
-
-},{"./lib/rng":"../node_modules/uuid/lib/rng-browser.js","./lib/bytesToUuid":"../node_modules/uuid/lib/bytesToUuid.js"}],"components/Error/Error.js":[function(require,module,exports) {
+var _default = withNotes;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","./NotesContext":"containers/Notes/NotesContext.js"}],"components/Error/Error.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30239,245 +30108,7 @@ var NoteList = function NoteList(_ref) {
 
 var _default = NoteList;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","../Note/Note":"components/Note/Note.js","./note-list.scss":"components/NoteList/note-list.scss"}],"containers/Settings/SettingsContext.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var SettingsContext = _react.default.createContext();
-
-var _default = SettingsContext;
-exports.default = _default;
-},{"react":"../node_modules/react/index.js"}],"containers/Settings/withSettings.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _SettingsContext = _interopRequireDefault(require("./SettingsContext"));
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var withSettings = function withSettings(Component) {
-  return function (props) {
-    return _react.default.createElement(_SettingsContext.default.Consumer, null, function (context) {
-      return _react.default.createElement(Component, _extends({}, props, context));
-    });
-  };
-};
-
-var _default = withSettings;
-exports.default = _default;
-},{"react":"../node_modules/react/index.js","./SettingsContext":"containers/Settings/SettingsContext.js"}],"components/AppBar/app-bar.scss":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
-
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/AppBar/AppBar.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _withSettings = _interopRequireDefault(require("../../containers/Settings/withSettings"));
-
-require("./app-bar.scss");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var AppBar = function AppBar(_ref) {
-  var isLoading = _ref.isLoading,
-      saveHasError = _ref.saveHasError,
-      onSaveRetry = _ref.onSaveRetry,
-      onOpenMenu = _ref.onOpenMenu,
-      theme = _ref.theme;
-  return _react.default.createElement("div", {
-    className: "app-bar",
-    style: theme && theme.navBar
-  }, _react.default.createElement("div", {
-    className: "app-bar__container"
-  }, _react.default.createElement("button", {
-    className: "app-bar__action app-bar__action",
-    onClick: onOpenMenu
-  }, _react.default.createElement("i", {
-    className: "material-icons"
-  }, "menu")), _react.default.createElement("span", {
-    className: "app-bar__brand"
-  }, "Note JS"), isLoading && _react.default.createElement("button", {
-    className: "app-bar__action app-bar__action--rotation"
-  }, _react.default.createElement("i", {
-    className: "material-icons"
-  }, "refresh")), saveHasError && _react.default.createElement("button", {
-    className: "app-bar__action app-bar__action--danger",
-    onClick: onSaveRetry
-  }, _react.default.createElement("i", {
-    className: "material-icons"
-  }, "cloud_off"))));
-};
-
-var _default = (0, _withSettings.default)(AppBar);
-
-exports.default = _default;
-},{"react":"../node_modules/react/index.js","../../containers/Settings/withSettings":"containers/Settings/withSettings.js","./app-bar.scss":"components/AppBar/app-bar.scss"}],"components/NavigationDrawer/navigation-drawer.scss":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
-
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/NavigationDrawer/MenuItem.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-require("./navigation-drawer.scss");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var MenuItem = function MenuItem(_ref) {
-  var isActive = _ref.isActive,
-      icon = _ref.icon,
-      label = _ref.label,
-      onClick = _ref.onClick;
-  return _react.default.createElement("button", {
-    className: (0, _classnames.default)("navigation-drawer__menu__item", {
-      "navigation-drawer__menu__item--active": isActive
-    }),
-    onClick: onClick
-  }, _react.default.createElement("i", {
-    className: "material-icons"
-  }, icon), label);
-};
-
-var _default = MenuItem;
-exports.default = _default;
-},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","./navigation-drawer.scss":"components/NavigationDrawer/navigation-drawer.scss"}],"components/NavigationDrawer/NavigationDrawer.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _classnames = _interopRequireDefault(require("classnames"));
-
-var _reactRouterDom = require("react-router-dom");
-
-var _MenuItem = _interopRequireDefault(require("./MenuItem"));
-
-require("./navigation-drawer.scss");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var NavigationDrawer = function NavigationDrawer(_ref) {
-  var menu = _ref.menu,
-      onCloseMenu = _ref.onCloseMenu,
-      isOpen = _ref.isOpen,
-      history = _ref.history,
-      location = _ref.location;
-  return _react.default.createElement("div", {
-    className: (0, _classnames.default)("navigation-drawer", {
-      "navigation-drawer--open": isOpen
-    })
-  }, _react.default.createElement("div", {
-    className: "navigation-drawer__head"
-  }, _react.default.createElement("button", {
-    className: "navigation-drawer__head__button",
-    onClick: onCloseMenu
-  }, _react.default.createElement("i", {
-    className: "material-icons"
-  }, "close"))), _react.default.createElement("div", {
-    className: "navigation-drawer__menu"
-  }, menu.map(function (item) {
-    return _react.default.createElement(_MenuItem.default, {
-      key: item.icon,
-      isActive: location.pathname === item.path,
-      onClick: function onClick() {
-        onCloseMenu();
-        history.push(item.path);
-      },
-      icon: menu.icon,
-      label: item.label
-    });
-  })));
-};
-
-var _default = (0, _reactRouterDom.withRouter)(NavigationDrawer);
-
-exports.default = _default;
-},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./MenuItem":"components/NavigationDrawer/MenuItem.js","./navigation-drawer.scss":"components/NavigationDrawer/navigation-drawer.scss"}],"components/PageLayout/page-layout.scss":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
-
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/PageLayout/PageLayout.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _AppBar = _interopRequireDefault(require("../AppBar/AppBar"));
-
-var _NavigationDrawer = _interopRequireDefault(require("../NavigationDrawer/NavigationDrawer"));
-
-require("./page-layout.scss");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var PageLayout = function PageLayout(_ref) {
-  var children = _ref.children,
-      isLoading = _ref.isLoading,
-      saveHasError = _ref.saveHasError,
-      onSaveRetry = _ref.onSaveRetry,
-      onOpenMenu = _ref.onOpenMenu,
-      onCloseMenu = _ref.onCloseMenu,
-      isMenuOpen = _ref.isMenuOpen,
-      menu = _ref.menu;
-  return _react.default.createElement("div", null, _react.default.createElement(_AppBar.default, {
-    isLoading: isLoading,
-    saveHasError: saveHasError,
-    onSaveRetry: onSaveRetry,
-    onOpenMenu: onOpenMenu
-  }), _react.default.createElement("div", {
-    className: "container"
-  }, children), _react.default.createElement(_NavigationDrawer.default, {
-    menu: menu,
-    onCloseMenu: onCloseMenu,
-    isOpen: isMenuOpen
-  }));
-};
-
-var _default = PageLayout;
-exports.default = _default;
-},{"react":"../node_modules/react/index.js","../AppBar/AppBar":"components/AppBar/AppBar.js","../NavigationDrawer/NavigationDrawer":"components/NavigationDrawer/NavigationDrawer.js","./page-layout.scss":"components/PageLayout/page-layout.scss"}],"components/Header/header.scss":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../Note/Note":"components/Note/Note.js","./note-list.scss":"components/NoteList/note-list.scss"}],"components/Header/header.scss":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -30595,7 +30226,225 @@ var ButtonLink = function ButtonLink(_ref) {
 
 var _default = ButtonLink;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./button.scss":"components/Button/button.scss"}],"components/index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./button.scss":"components/Button/button.scss"}],"components/NavigationDrawer/navigation-drawer.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/NavigationDrawer/MenuItem.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+require("./navigation-drawer.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var MenuItem = function MenuItem(_ref) {
+  var isActive = _ref.isActive,
+      icon = _ref.icon,
+      label = _ref.label,
+      onClick = _ref.onClick;
+  return _react.default.createElement("button", {
+    className: (0, _classnames.default)("navigation-drawer__menu__item", {
+      "navigation-drawer__menu__item--active": isActive
+    }),
+    onClick: onClick
+  }, _react.default.createElement("i", {
+    className: "material-icons"
+  }, icon), label);
+};
+
+var _default = MenuItem;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","./navigation-drawer.scss":"components/NavigationDrawer/navigation-drawer.scss"}],"containers/Settings/SettingsContext.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SettingsContext = _react.default.createContext();
+
+var _default = SettingsContext;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js"}],"containers/Settings/withSettings.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _SettingsContext = _interopRequireDefault(require("./SettingsContext"));
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var withSettings = function withSettings(Component) {
+  return function (props) {
+    return _react.default.createElement(_SettingsContext.default.Consumer, null, function (context) {
+      return _react.default.createElement(Component, _extends({}, props, context));
+    });
+  };
+};
+
+var _default = withSettings;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","./SettingsContext":"containers/Settings/SettingsContext.js"}],"components/AppBar/app-bar.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/AppBar/AppBar.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _withSettings = _interopRequireDefault(require("../../containers/Settings/withSettings"));
+
+require("./app-bar.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AppBar = function AppBar(_ref) {
+  var isLoading = _ref.isLoading,
+      saveHasError = _ref.saveHasError,
+      onSaveRetry = _ref.onSaveRetry,
+      onOpenMenu = _ref.onOpenMenu,
+      theme = _ref.theme;
+  return _react.default.createElement("div", {
+    className: "app-bar",
+    style: theme && theme.navBar
+  }, _react.default.createElement("div", {
+    className: "app-bar__container"
+  }, _react.default.createElement("button", {
+    className: "app-bar__action app-bar__action",
+    onClick: onOpenMenu
+  }, _react.default.createElement("i", {
+    className: "material-icons"
+  }, "menu")), _react.default.createElement("span", {
+    className: "app-bar__brand"
+  }, "Note JS"), isLoading && _react.default.createElement("button", {
+    className: "app-bar__action app-bar__action--rotation"
+  }, _react.default.createElement("i", {
+    className: "material-icons"
+  }, "refresh")), saveHasError && _react.default.createElement("button", {
+    className: "app-bar__action app-bar__action--danger",
+    onClick: onSaveRetry
+  }, _react.default.createElement("i", {
+    className: "material-icons"
+  }, "cloud_off"))));
+};
+
+var _default = (0, _withSettings.default)(AppBar);
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","../../containers/Settings/withSettings":"containers/Settings/withSettings.js","./app-bar.scss":"components/AppBar/app-bar.scss"}],"components/NavigationDrawer/NavigationDrawer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _classnames = _interopRequireDefault(require("classnames"));
+
+var _reactRouterDom = require("react-router-dom");
+
+var _MenuItem = _interopRequireDefault(require("./MenuItem"));
+
+require("./navigation-drawer.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var NavigationDrawer = function NavigationDrawer(_ref) {
+  var menu = _ref.menu,
+      onCloseMenu = _ref.onCloseMenu,
+      isOpen = _ref.isOpen,
+      history = _ref.history,
+      location = _ref.location;
+  return _react.default.createElement("div", {
+    className: (0, _classnames.default)("navigation-drawer", {
+      "navigation-drawer--open": isOpen
+    })
+  }, _react.default.createElement("div", {
+    className: "navigation-drawer__head"
+  }, _react.default.createElement("button", {
+    className: "navigation-drawer__head__button",
+    onClick: onCloseMenu
+  }, _react.default.createElement("i", {
+    className: "material-icons"
+  }, "close"))), _react.default.createElement("div", {
+    className: "navigation-drawer__menu"
+  }, menu.map(function (item) {
+    return _react.default.createElement(_MenuItem.default, {
+      key: item.icon,
+      isActive: location.pathname === item.path,
+      onClick: function onClick() {
+        onCloseMenu();
+        history.push(item.path);
+      },
+      icon: menu.icon,
+      label: item.label
+    });
+  })));
+};
+
+var _default = (0, _reactRouterDom.withRouter)(NavigationDrawer);
+
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","classnames":"../node_modules/classnames/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","./MenuItem":"components/NavigationDrawer/MenuItem.js","./navigation-drawer.scss":"components/NavigationDrawer/navigation-drawer.scss"}],"components/Container/container.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"components/Container/Container.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+require("./container.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Container = function Container(_ref) {
+  var children = _ref.children;
+  return _react.default.createElement("div", {
+    className: "container"
+  }, children);
+};
+
+var _default = Container;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","./container.scss":"components/Container/container.scss"}],"components/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30623,12 +30472,6 @@ Object.defineProperty(exports, "NoteList", {
   enumerable: true,
   get: function () {
     return _NoteList.default;
-  }
-});
-Object.defineProperty(exports, "PageLayout", {
-  enumerable: true,
-  get: function () {
-    return _PageLayout.default;
   }
 });
 Object.defineProperty(exports, "Header", {
@@ -30667,6 +30510,18 @@ Object.defineProperty(exports, "AppBar", {
     return _AppBar.default;
   }
 });
+Object.defineProperty(exports, "NavigationDrawer", {
+  enumerable: true,
+  get: function () {
+    return _NavigationDrawer.default;
+  }
+});
+Object.defineProperty(exports, "Container", {
+  enumerable: true,
+  get: function () {
+    return _Container.default;
+  }
+});
 
 var _Error = _interopRequireDefault(require("./Error/Error"));
 
@@ -30675,8 +30530,6 @@ var _NewNote = _interopRequireDefault(require("./NewNote/NewNote"));
 var _Note = _interopRequireDefault(require("./Note/Note"));
 
 var _NoteList = _interopRequireDefault(require("./NoteList/NoteList"));
-
-var _PageLayout = _interopRequireDefault(require("./PageLayout/PageLayout"));
 
 var _Header = _interopRequireDefault(require("./Header/Header"));
 
@@ -30690,8 +30543,12 @@ var _MenuItem = _interopRequireDefault(require("./NavigationDrawer/MenuItem"));
 
 var _AppBar = _interopRequireDefault(require("./AppBar/AppBar"));
 
+var _NavigationDrawer = _interopRequireDefault(require("./NavigationDrawer/NavigationDrawer"));
+
+var _Container = _interopRequireDefault(require("./Container/Container"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./Error/Error":"components/Error/Error.js","./NewNote/NewNote":"components/NewNote/NewNote.js","./Note/Note":"components/Note/Note.js","./NoteList/NoteList":"components/NoteList/NoteList.js","./PageLayout/PageLayout":"components/PageLayout/PageLayout.js","./Header/Header":"components/Header/Header.js","./Button/Button":"components/Button/Button.js","./Center/Center":"components/Center/Center.js","./Button/ButtonLink":"components/Button/ButtonLink.js","./NavigationDrawer/MenuItem":"components/NavigationDrawer/MenuItem.js","./AppBar/AppBar":"components/AppBar/AppBar.js"}],"services/NoteService.js":[function(require,module,exports) {
+},{"./Error/Error":"components/Error/Error.js","./NewNote/NewNote":"components/NewNote/NewNote.js","./Note/Note":"components/Note/Note.js","./NoteList/NoteList":"components/NoteList/NoteList.js","./Header/Header":"components/Header/Header.js","./Button/Button":"components/Button/Button.js","./Center/Center":"components/Center/Center.js","./Button/ButtonLink":"components/Button/ButtonLink.js","./NavigationDrawer/MenuItem":"components/NavigationDrawer/MenuItem.js","./AppBar/AppBar":"components/AppBar/AppBar.js","./NavigationDrawer/NavigationDrawer":"components/NavigationDrawer/NavigationDrawer.js","./Container/Container":"components/Container/Container.js"}],"containers/PageLayout/PageLayout.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30699,60 +30556,93 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+var _react = _interopRequireDefault(require("react"));
+
+var _withNotes = _interopRequireDefault(require("../Notes/withNotes"));
+
+var _components = require("../../components");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var failedLoadAttempts = 2;
-var failedSaveAttempts = 2;
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-var NoteService =
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var PageLayout =
 /*#__PURE__*/
-function () {
-  function NoteService() {
-    _classCallCheck(this, NoteService);
+function (_React$Component) {
+  _inherits(PageLayout, _React$Component);
+
+  function PageLayout() {
+    var _getPrototypeOf2;
+
+    var _this;
+
+    var _temp;
+
+    _classCallCheck(this, PageLayout);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _possibleConstructorReturn(_this, (_temp = _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(PageLayout)).call.apply(_getPrototypeOf2, [this].concat(args))), _this.state = {
+      isMenuOpen: false
+    }, _this.handleOpenMenu = function () {
+      _this.setState({
+        isMenuOpen: true
+      });
+    }, _this.handleCloseMenu = function () {
+      _this.setState({
+        isMenuOpen: false
+      });
+    }, _temp));
   }
 
-  _createClass(NoteService, null, [{
-    key: "load",
-    value: function load() {
-      return new Promise(function (resolve, reject) {
-        setTimeout(function () {
-          if (failedLoadAttempts > 1) {
-            var notes = window.localStorage.getItem("notes");
-            resolve(notes ? JSON.parse(notes) : []);
-          } else {
-            reject();
-            failedLoadAttempts++;
-          }
-        }, 2000);
-      });
-    }
-  }, {
-    key: "save",
-    value: function save(notes) {
-      return new Promise(function (resolve, reject) {
-        setTimeout(function () {
-          if (failedSaveAttempts > 1) {
-            window.localStorage.setItem("notes", JSON.stringify(notes));
-            resolve();
-          } else {
-            reject();
-            failedLoadAttempts++;
-          }
-        }, 2000);
-      });
+  _createClass(PageLayout, [{
+    key: "render",
+    value: function render() {
+      var _this$props = this.props,
+          children = _this$props.children,
+          isLoading = _this$props.isLoading,
+          saveHasError = _this$props.saveHasError,
+          onSaveRetry = _this$props.onSaveRetry,
+          menu = _this$props.menu;
+      var isMenuOpen = this.state.isMenuOpen;
+      return _react.default.createElement("div", null, _react.default.createElement(_components.AppBar, {
+        isLoading: isLoading,
+        saveHasError: saveHasError,
+        onSaveRetry: onSaveRetry,
+        onOpenMenu: this.handleOpenMenu
+      }), _react.default.createElement(_components.Container, null, children), _react.default.createElement(_components.NavigationDrawer, {
+        menu: menu,
+        onCloseMenu: this.handleCloseMenu,
+        isOpen: isMenuOpen
+      }));
     }
   }]);
 
-  return NoteService;
-}();
+  return PageLayout;
+}(_react.default.Component);
 
-var _default = NoteService;
+var _default = (0, _withNotes.default)(PageLayout);
+
 exports.default = _default;
-},{}],"containers/Notes/NotesPage.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../Notes/withNotes":"containers/Notes/withNotes.js","../../components":"components/index.js"}],"containers/Notes/NotesPage.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30763,6 +30653,10 @@ exports.default = void 0;
 var _react = _interopRequireWildcard(require("react"));
 
 var _components = require("../../components");
+
+var _withNotes = _interopRequireDefault(require("./withNotes"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
@@ -30794,9 +30688,10 @@ var NotesPage = function NotesPage(_ref) {
   }));
 };
 
-var _default = NotesPage;
+var _default = (0, _withNotes.default)(NotesPage);
+
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","../../components":"components/index.js"}],"containers/About/AboutPage.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../../components":"components/index.js","./withNotes":"containers/Notes/withNotes.js"}],"containers/About/AboutPage.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30950,28 +30845,11 @@ var menu = [{
 }];
 exports.menu = menu;
 
-var Routes = function Routes(_ref) {
-  var notes = _ref.notes,
-      reloadHasError = _ref.reloadHasError,
-      onRetry = _ref.onRetry,
-      onAddNote = _ref.onAddNote,
-      onMove = _ref.onMove,
-      onDelete = _ref.onDelete,
-      onEdit = _ref.onEdit;
+var Routes = function Routes() {
   return _react.default.createElement(_reactRouterDom.Switch, null, _react.default.createElement(_reactRouterDom.Route, {
     path: "/",
     exact: true,
-    render: function render(props) {
-      return _react.default.createElement(_NotesPage.default, {
-        notes: notes,
-        reloadHasError: reloadHasError,
-        onRetry: onRetry,
-        onAddNote: onAddNote,
-        onMove: onMove,
-        onDelete: onDelete,
-        onEdit: onEdit
-      });
-    }
+    component: _NotesPage.default
   }), _react.default.createElement(_reactRouterDom.Route, {
     path: "/about",
     exact: true,
@@ -31068,7 +30946,7 @@ function (_Component) {
 }(_react.Component);
 
 exports.default = SettingsProvider;
-},{"react":"../node_modules/react/index.js","./SettingsContext":"containers/Settings/SettingsContext.js"}],"containers/App/App.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./SettingsContext":"containers/Settings/SettingsContext.js"}],"services/NoteService.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31076,25 +30954,255 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _react = _interopRequireDefault(require("react"));
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _reactRouterDom = require("react-router-dom");
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-var _v = _interopRequireDefault(require("uuid/v1"));
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var _components = require("../../components");
+var failedLoadAttempts = 2;
+var failedSaveAttempts = 2;
+
+var NoteService =
+/*#__PURE__*/
+function () {
+  function NoteService() {
+    _classCallCheck(this, NoteService);
+  }
+
+  _createClass(NoteService, null, [{
+    key: "load",
+    value: function load() {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          if (failedLoadAttempts > 1) {
+            var notes = window.localStorage.getItem("notes");
+            resolve(notes ? JSON.parse(notes) : []);
+          } else {
+            reject();
+            failedLoadAttempts++;
+          }
+        }, 2000);
+      });
+    }
+  }, {
+    key: "save",
+    value: function save(notes) {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          if (failedSaveAttempts > 1) {
+            window.localStorage.setItem("notes", JSON.stringify(notes));
+            resolve();
+          } else {
+            reject();
+            failedLoadAttempts++;
+          }
+        }, 2000);
+      });
+    }
+  }]);
+
+  return NoteService;
+}();
+
+var _default = NoteService;
+exports.default = _default;
+},{}],"../node_modules/uuid/lib/rng-browser.js":[function(require,module,exports) {
+// Unique ID creation requires a high quality random # generator.  In the
+// browser this is a little complicated due to unknown quality of Math.random()
+// and inconsistent support for the `crypto` API.  We do the best we can via
+// feature-detection
+
+// getRandomValues needs to be invoked in a context where "this" is a Crypto
+// implementation. Also, find the complete implementation of crypto on IE11.
+var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
+                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
+
+if (getRandomValues) {
+  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
+  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+
+  module.exports = function whatwgRNG() {
+    getRandomValues(rnds8);
+    return rnds8;
+  };
+} else {
+  // Math.random()-based (RNG)
+  //
+  // If all else fails, use Math.random().  It's fast, but is of unspecified
+  // quality.
+  var rnds = new Array(16);
+
+  module.exports = function mathRNG() {
+    for (var i = 0, r; i < 16; i++) {
+      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    }
+
+    return rnds;
+  };
+}
+
+},{}],"../node_modules/uuid/lib/bytesToUuid.js":[function(require,module,exports) {
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+for (var i = 0; i < 256; ++i) {
+  byteToHex[i] = (i + 0x100).toString(16).substr(1);
+}
+
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex;
+  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
+  return ([bth[buf[i++]], bth[buf[i++]], 
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]], '-',
+	bth[buf[i++]], bth[buf[i++]],
+	bth[buf[i++]], bth[buf[i++]],
+	bth[buf[i++]], bth[buf[i++]]]).join('');
+}
+
+module.exports = bytesToUuid;
+
+},{}],"../node_modules/uuid/v1.js":[function(require,module,exports) {
+var rng = require('./lib/rng');
+var bytesToUuid = require('./lib/bytesToUuid');
+
+// **`v1()` - Generate time-based UUID**
+//
+// Inspired by https://github.com/LiosK/UUID.js
+// and http://docs.python.org/library/uuid.html
+
+var _nodeId;
+var _clockseq;
+
+// Previous uuid creation time
+var _lastMSecs = 0;
+var _lastNSecs = 0;
+
+// See https://github.com/broofa/node-uuid for API details
+function v1(options, buf, offset) {
+  var i = buf && offset || 0;
+  var b = buf || [];
+
+  options = options || {};
+  var node = options.node || _nodeId;
+  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+
+  // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+  if (node == null || clockseq == null) {
+    var seedBytes = rng();
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [
+        seedBytes[0] | 0x01,
+        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
+      ];
+    }
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
+    }
+  }
+
+  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
+
+  // Per 4.2.1.2, use count of uuid's generated during the current clock
+  // cycle to simulate higher resolution clock
+  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
+
+  // Time since last uuid creation (in msecs)
+  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
+
+  // Per 4.2.1.2, Bump clockseq on clock regression
+  if (dt < 0 && options.clockseq === undefined) {
+    clockseq = clockseq + 1 & 0x3fff;
+  }
+
+  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+  // time interval
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+    nsecs = 0;
+  }
+
+  // Per 4.2.1.2 Throw error if too many uuids are requested
+  if (nsecs >= 10000) {
+    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
+  }
+
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq;
+
+  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+  msecs += 12219292800000;
+
+  // `time_low`
+  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+  b[i++] = tl >>> 24 & 0xff;
+  b[i++] = tl >>> 16 & 0xff;
+  b[i++] = tl >>> 8 & 0xff;
+  b[i++] = tl & 0xff;
+
+  // `time_mid`
+  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
+  b[i++] = tmh >>> 8 & 0xff;
+  b[i++] = tmh & 0xff;
+
+  // `time_high_and_version`
+  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+  b[i++] = tmh >>> 16 & 0xff;
+
+  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+  b[i++] = clockseq >>> 8 | 0x80;
+
+  // `clock_seq_low`
+  b[i++] = clockseq & 0xff;
+
+  // `node`
+  for (var n = 0; n < 6; ++n) {
+    b[i + n] = node[n];
+  }
+
+  return buf ? buf : bytesToUuid(b);
+}
+
+module.exports = v1;
+
+},{"./lib/rng":"../node_modules/uuid/lib/rng-browser.js","./lib/bytesToUuid":"../node_modules/uuid/lib/bytesToUuid.js"}],"containers/Notes/NotesProvider.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _NotesContext = _interopRequireDefault(require("./NotesContext"));
 
 var _NoteService = _interopRequireDefault(require("../../services/NoteService"));
 
-var _Routes = _interopRequireWildcard(require("../Routes"));
+var _v = _interopRequireDefault(require("uuid/v1"));
 
-var _SettingsProvider = _interopRequireDefault(require("../Settings/SettingsProvider"));
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -31114,30 +31222,29 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-var App =
+var NotesProvider =
 /*#__PURE__*/
-function (_React$Component) {
-  _inherits(App, _React$Component);
+function (_Component) {
+  _inherits(NotesProvider, _Component);
 
-  function App() {
+  function NotesProvider() {
     var _getPrototypeOf2;
 
     var _this;
 
     var _temp;
 
-    _classCallCheck(this, App);
+    _classCallCheck(this, NotesProvider);
 
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
 
-    return _possibleConstructorReturn(_this, (_temp = _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(App)).call.apply(_getPrototypeOf2, [this].concat(args))), _this.state = {
+    return _possibleConstructorReturn(_this, (_temp = _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(NotesProvider)).call.apply(_getPrototypeOf2, [this].concat(args))), _this.state = {
       notes: [],
       isLoading: false,
       reloadHasError: false,
-      saveHasError: false,
-      isMenuOpen: false
+      saveHasError: false
     }, _this.handleAddNote = function (text) {
       _this.setState(function (prevState) {
         var notes = prevState.notes.concat({
@@ -31229,18 +31336,10 @@ function (_React$Component) {
           saveHasError: true
         });
       });
-    }, _this.handleOpenMenu = function () {
-      _this.setState({
-        isMenuOpen: true
-      });
-    }, _this.handleCloseMenu = function () {
-      _this.setState({
-        isMenuOpen: false
-      });
     }, _temp));
   }
 
-  _createClass(App, [{
+  _createClass(NotesProvider, [{
     key: "componentDidCatch",
     value: function componentDidCatch() {
       this.setState({
@@ -31257,40 +31356,60 @@ function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
-      var _this$state = this.state,
-          isLoading = _this$state.isLoading,
-          reloadHasError = _this$state.reloadHasError,
-          saveHasError = _this$state.saveHasError,
-          notes = _this$state.notes,
-          isMenuOpen = _this$state.isMenuOpen;
-      return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_SettingsProvider.default, null, _react.default.createElement(_components.PageLayout, {
-        isLoading: isLoading,
-        saveHasError: saveHasError,
-        onSaveRetry: function onSaveRetry() {
-          _this2.handleSave(notes);
-        },
-        onOpenMenu: this.handleOpenMenu,
-        onCloseMenu: this.handleCloseMenu,
-        isMenuOpen: isMenuOpen,
-        menu: _Routes.menu
-      }, _react.default.createElement(_Routes.default, {
-        notes: notes,
-        reloadHasError: reloadHasError,
-        onRetry: this.handleReload,
-        onAddNote: this.handleAddNote,
-        onMove: this.handleMove,
-        onDelete: this.handleDelete,
-        onEdit: this.handleEdit
-      }))));
+      return _react.default.createElement(_NotesContext.default.Provider, {
+        value: _extends({}, this.state, {
+          onSaveRetry: function onSaveRetry() {
+            _this2.handleSave(_this2.state.notes);
+          },
+          onRetry: this.handleReload,
+          onAddNote: this.handleAddNote,
+          onMove: this.handleMove,
+          onDelete: this.handleDelete,
+          onEdit: this.handleEdit
+        })
+      }, this.props.children);
     }
   }]);
 
-  return App;
-}(_react.default.Component);
+  return NotesProvider;
+}(_react.Component);
+
+exports.default = NotesProvider;
+},{"react":"../node_modules/react/index.js","./NotesContext":"containers/Notes/NotesContext.js","../../services/NoteService":"services/NoteService.js","uuid/v1":"../node_modules/uuid/v1.js"}],"containers/App/App.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireDefault(require("react"));
+
+var _reactRouterDom = require("react-router-dom");
+
+var _PageLayout = _interopRequireDefault(require("../PageLayout/PageLayout"));
+
+var _Routes = _interopRequireWildcard(require("../Routes"));
+
+var _SettingsProvider = _interopRequireDefault(require("../Settings/SettingsProvider"));
+
+var _NotesProvider = _interopRequireDefault(require("../Notes/NotesProvider"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; if (obj != null) { var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var App = function App() {
+  return _react.default.createElement(_reactRouterDom.BrowserRouter, null, _react.default.createElement(_SettingsProvider.default, null, _react.default.createElement(_NotesProvider.default, null, _react.default.createElement(_PageLayout.default, {
+    menu: _Routes.menu
+  }, _react.default.createElement(_Routes.default, null)))));
+};
 
 var _default = App;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","uuid/v1":"../node_modules/uuid/v1.js","../../components":"components/index.js","../../services/NoteService":"services/NoteService.js","../Routes":"containers/Routes.js","../Settings/SettingsProvider":"containers/Settings/SettingsProvider.js"}],"index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","react-router-dom":"../node_modules/react-router-dom/esm/react-router-dom.js","../PageLayout/PageLayout":"containers/PageLayout/PageLayout.js","../Routes":"containers/Routes.js","../Settings/SettingsProvider":"containers/Settings/SettingsProvider.js","../Notes/NotesProvider":"containers/Notes/NotesProvider.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -31332,7 +31451,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53915" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55099" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

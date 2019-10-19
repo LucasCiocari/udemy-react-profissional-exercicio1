@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 
 import {NewNote, NoteList, Error} from "../../components"
-
+import withNotes from "./withNotes"
 const NotesPage = ({reloadHasError, onRetry, onAddNote, notes, onMove, onDelete, onEdit}) => {
 
     if (reloadHasError) {
@@ -21,4 +21,4 @@ const NotesPage = ({reloadHasError, onRetry, onAddNote, notes, onMove, onDelete,
     )
 }
 
-export default NotesPage;
+export default withNotes(NotesPage);
